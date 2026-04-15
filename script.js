@@ -43,11 +43,15 @@ function render(articles) {
   articles.forEach((a, i) => {
     const el = document.createElement("a");
     el.className = "thumb " + toneClass(i);
+    if (a.coverUrl) el.classList.add("has-image");
     el.href = `article.html?slug=${encodeURIComponent(a.slug)}`;
     el.dataset.cat = a.category;
 
     const tile = document.createElement("span");
     tile.className = "tile";
+    if (a.coverUrl) {
+      tile.style.backgroundImage = `url("${a.coverUrl}?w=600&auto=format&q=75")`;
+    }
     el.appendChild(tile);
 
     const meta = document.createElement("span");
@@ -87,7 +91,8 @@ function bindFilter() {
       link.classList.add("active");
       const target = link.dataset.cat;
       document.querySelectorAll(".thumb").forEach(t => {
-        t.classList.toggle("hidden", !(target === "all" || t.dataset.cat === target));
+        const match = target === "all" || t.dataset.cat === target;
+        t.classList.toggle("dimmed", !match);
       });
     });
   });

@@ -43,18 +43,18 @@ const ARTICLE_FIELDS = `
   category,
   publishedAt,
   excerpt,
-  "coverUrl": coverImage.asset->url,
+  "coverUrl": coverImage.asset.asset->url,
   coverImage{
-    "asset": asset,
     caption,
     credit,
-    alt
+    alt,
+    "url": asset.asset->url
   },
   body[]{
     ...,
     _type == "inlineImage" => {
       ...,
-      "url": asset->url
+      "url": asset.asset->url
     },
     _type == "image" => {
       ...,
@@ -78,7 +78,8 @@ export async function getArticle(slug) {
 export async function getRelatedArticles(excludeSlug, limit = 4) {
   if (!client) return null;
   const q = `*[_type == "article" && slug.current != $slug] | order(publishedAt desc)[0...20]{
-    title, "slug": slug.current, author, category
+    title, "slug": slug.current, author, category,
+    "coverUrl": coverImage.asset.asset->url
   }`;
   try {
     const list = await client.fetch(q, { slug: excludeSlug || "" });

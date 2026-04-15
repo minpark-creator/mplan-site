@@ -150,9 +150,13 @@ function renderViewMore(list) {
   picks.forEach((a, i) => {
     const el = document.createElement("a");
     el.className = "thumb " + toneClass(i);
+    if (a.coverUrl) el.classList.add("has-image");
     el.href = `article.html?slug=${encodeURIComponent(a.slug)}`;
+    const tileStyle = a.coverUrl
+      ? ` style="background-image:url('${a.coverUrl}?w=600&auto=format&q=75')"`
+      : "";
     el.innerHTML = `
-      <span class="tile"></span>
+      <span class="tile"${tileStyle}></span>
       <span class="meta">
         <span class="title">${a.title || ""}</span>
         <span class="author">${a.author || ""}</span>

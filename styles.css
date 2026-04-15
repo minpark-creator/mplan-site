@@ -103,9 +103,16 @@ sup {
   position: absolute;
   inset: 0;
   background: inherit;
-  transition: opacity 0.25s ease;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 0.25s ease, filter 0.25s ease;
 }
-.thumb:hover .tile { opacity: 0.15; }
+
+/* When a cover image is set, fade the tile slightly on hover rather than
+   clearing it, so the image stays visible under the title/author overlay. */
+.thumb.has-image:hover .tile { opacity: 0.55; }
+.thumb:not(.has-image):hover .tile { opacity: 0.15; }
 
 .thumb .meta {
   position: absolute;
@@ -122,6 +129,12 @@ sup {
   color: #000;
 }
 .thumb:hover .meta { opacity: 1; }
+
+/* Keep hover text legible on any cover image */
+.thumb.has-image .meta {
+  color: #000;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.6);
+}
 
 .thumb .meta .title {
   font-size: 13px;
@@ -144,7 +157,13 @@ sup {
 .thumb.y6 { background: #fff066; }
 .thumb.y7 { background: #e6c200; }
 
-/* Hidden state used by category filter */
+/* Smooth transition for the whole tile so the filter dim feels organic */
+.thumb { transition: opacity 0.35s ease; }
+
+/* Category filter: non-matching tiles fade way down but stay in place */
+.thumb.dimmed { opacity: 0.08; pointer-events: none; }
+
+/* Hidden state (kept for any other use) */
 .thumb.hidden { display: none; }
 
 /* ----- About / Contact pages ----- */
@@ -283,9 +302,10 @@ sup {
 }
 .article-body p {
   font-size: 16px;
-  line-height: 1.65;
-  margin-bottom: 1.1em;
+  line-height: 1.7;
+  margin: 0 0 1.7em;
 }
+.article-body p + p { margin-top: 0; }
 .article-body h2 {
   font-size: 20px;
   font-weight: 400;
