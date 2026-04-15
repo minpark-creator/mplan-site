@@ -1,0 +1,98 @@
+MPLAN — Deployment guide (Sanity Studio + Vercel)
+==================================================
+
+You will deploy two things:
+  1) Sanity Studio  — the editor app for content (hosted free at *.sanity.studio)
+  2) The website    — the static HTML/CSS/JS (hosted free at Vercel, custom domain mplanmag.com)
+
+
+A. Sanity Studio — deploy / redeploy
+------------------------------------
+The Studio has already been deployed once. Whenever you change any schema
+file under studio/schemas/, redeploy it so the editor sees the new fields:
+
+    cd "/Users/bagmin/Documents/2026/MPLAN mag/website making 2/studio"
+    npm install           # only needed the first time
+    npm run deploy        # pushes the current schemas to your live studio
+
+Your Studio should be live at:
+
+    https://mplanmag.sanity.studio   (or whatever hostname you picked)
+
+Log in there and create content:
+  - One "About page" document (pinned singleton)
+  - One "Contact page" document (pinned singleton)
+  - Any number of "Article" documents with:
+      Title, Slug, Author, Published date, Category (M/P/L/A/N),
+      Excerpt, Cover image (with caption + credit + alt),
+      Body = rich text with inline images. Each inline image has
+      its own Caption, Credit (source), and Alt text fields.
+
+
+B. Website — deploy to Vercel with mplanmag.com
+-----------------------------------------------
+1) Put this folder on GitHub (or GitLab/Bitbucket).
+   From the project folder:
+
+       git init
+       git add .
+       git commit -m "MPLAN initial"
+       # create an empty repo on github.com, then:
+       git remote add origin git@github.com:<you>/mplan-site.git
+       git push -u origin main
+
+2) Go to https://vercel.com  (sign up free, connect GitHub).
+   - Click "Add New... → Project"
+   - Import the mplan-site repo
+   - Framework preset: "Other"
+   - Build command: (leave empty)
+   - Output directory: "./"
+   - Deploy.
+
+   The /studio folder is ignored by the ignoreCommand in vercel.json,
+   so Vercel will only publish the website files (index/about/contact/article).
+
+3) Connect mplanmag.com (bought at Wix):
+   - In Vercel: Project → Settings → Domains → Add "mplanmag.com" and "www.mplanmag.com"
+   - Vercel shows DNS records to set. In Wix domain DNS panel:
+       A record (@)         → 76.76.21.21
+       CNAME (www)          → cname.vercel-dns.com
+     (Use the exact values Vercel tells you — they may differ.)
+   - Wait ~15–30 min for DNS to propagate. HTTPS is automatic.
+
+4) Add production origins to Sanity CORS:
+   https://www.sanity.io/manage/project/snlhed6n → API → CORS origins
+     - https://mplanmag.com
+     - https://www.mplanmag.com
+     - (optional) https://mplan-site.vercel.app  ← Vercel preview domain
+
+
+C. Daily editing workflow
+-------------------------
+  - Write new articles → go to https://mplanmag.sanity.studio → click "Article"
+    → + (create) → fill in → Publish.
+  - The website fetches from Sanity on page load, so new content shows up
+    within seconds (Sanity CDN) — no redeploy needed.
+  - If you change layout/CSS/HTML in this folder, commit + push; Vercel
+    auto-deploys on every push to main.
+
+
+D. Pricing note
+---------------
+  - Sanity Growth Trial (25 days) auto-downgrades to Free tier afterwards.
+    Your project, data, and Studio all stay. Free tier limits are plenty
+    for a magazine (10k docs, 3 users, 100k API req/mo).
+  - Vercel Hobby plan is free for personal/non-commercial use:
+    unlimited static hosting, 100GB bandwidth/month. A small magazine is
+    well within that.
+  - Wix: you only use it for the domain — no Wix subscription needed
+    (Wix lets you keep the domain without the site plan).
+
+
+E. Troubleshooting
+------------------
+  - "CORS blocked" in browser console → add the exact origin to Sanity CORS.
+  - Studio command "sanity" not found → run via "npm run dev" / "npm run deploy"
+    (uses local npm install rather than a global one).
+  - Studio deploy name already taken → run `npx sanity deploy` and choose
+    a different hostname (e.g. "mplan-mag" → https://mplan-mag.sanity.studio).

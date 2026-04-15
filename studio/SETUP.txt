@@ -1,0 +1,58 @@
+MPLAN — Sanity CMS setup
+=========================
+
+You already have a Sanity Studio. To drive this website from it,
+register the three schemas in studio/schemas/ and publish documents.
+
+1. Copy or import the schema files
+----------------------------------
+Drop these into your Sanity Studio's schemas folder (or import them
+directly from this repo):
+
+    studio/schemas/article.js
+    studio/schemas/aboutPage.js
+    studio/schemas/contactPage.js
+    studio/schemas/index.js
+
+In your studio's sanity.config.ts (or .js) make sure the schema types
+are registered, e.g.:
+
+    import { schemaTypes } from "./schemas";
+    export default defineConfig({
+      // ...
+      schema: { types: schemaTypes },
+    });
+
+2. Allow browser requests from the site
+---------------------------------------
+In Sanity → Manage → API → CORS origins, add the origin where this
+site is hosted (and http://localhost:8765 for local dev).
+
+3. Add the project details to the site
+--------------------------------------
+Open `sanity-config.js` and fill in:
+
+    projectId: "<your-sanity-project-id>"
+    dataset:   "production"
+
+4. Create content
+-----------------
+In the Studio, create:
+
+  - One `About page` document (singleton): intro paragraphs, team,
+    contributors, issues, contact block (mail / address / ig).
+  - One `Contact page` document (singleton): intro paragraphs,
+    emails (General / Submissions / Press — email on first row only),
+    sections (What to send, Commissions & Collaborations, etc.).
+  - Any number of `Article` documents: title, slug, author, category
+    (Matter / Projects / Letters / Address a space / Notes),
+    published date, cover image, body.
+
+Each Article appears as a yellow tile on the landing page; hovering
+shows the title and author. Clicking opens `article.html?slug=...`.
+
+5. Fallback behavior
+--------------------
+If `projectId` is empty or the Studio is unreachable, the site keeps
+working against the local mock content (hard-coded in script.js and
+the static HTML of about.html / contact.html).

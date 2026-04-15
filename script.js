@@ -1,0 +1,116 @@
+// MPLAN Magazine — home page grid + category filter
+// Pulls from Sanity when configured; otherwise falls back to MOCK below.
+
+import { getArticles, SANITY_ENABLED } from "./sanity-client.js";
+
+const CATEGORIES = ["matter", "projects", "letters", "address", "notes"];
+
+// --- Mock fallback articles (used if Sanity isn't configured yet) ---
+const MOCK_ARTICLES = [
+  { slug: "the-sidewalk-is-an-object", title: "The sidewalk is an object", author: "SeungYeon Kim",   category: "matter"   },
+  { slug: "concrete-fade",             title: "Concrete, fade",           author: "Min Park",         category: "matter"   },
+  { slug: "stone-steps-no-1",          title: "Stone steps no. 1",        author: "Mari Stokke",      category: "matter"   },
+  { slug: "window-frames-seoul",       title: "Window frames, Seoul",     author: "Tiffany Goh",      category: "matter"   },
+
+  { slug: "a-square-without-a-name",   title: "A square without a name",  author: "Stefan Krysa",     category: "projects" },
+  { slug: "ground-floor-again",        title: "Ground floor, again",      author: "Claire Scandella", category: "projects" },
+  { slug: "slow-infrastructure",       title: "Slow infrastructure",      author: "Michael Short",    category: "projects" },
+  { slug: "the-public-bench-brief",    title: "The public bench brief",   author: "Juliana Martins",  category: "projects" },
+
+  { slug: "letter-from-hackney",       title: "Letter from Hackney",      author: "Ellen Grubbs",     category: "letters"  },
+  { slug: "dear-planner",              title: "Dear Planner",             author: "Hannah Matthiesen",category: "letters"  },
+  { slug: "a-note-to-my-landlord",     title: "A note to my landlord",    author: "Adhrita Roy",      category: "letters"  },
+  { slug: "open-letter-to-a-street",   title: "Open letter to a street",  author: "Christine Langston", category: "letters" },
+
+  { slug: "address-a-crossing",        title: "Address a crossing",       author: "Chuan Liu",        category: "address"  },
+  { slug: "address-a-stairwell",       title: "Address a stairwell",      author: "Ashutosh Mishra",  category: "address"  },
+  { slug: "address-a-courtyard",       title: "Address a courtyard",      author: "Mia Summa",        category: "address"  },
+  { slug: "address-a-parking-lot",     title: "Address a parking lot",    author: "Miriam Thompson",  category: "address"  },
+
+  { slug: "notes-from-a-bus",          title: "Notes from a bus",         author: "Spencer Chin-Pok Chan", category: "notes" },
+  { slug: "notes-after-rain",          title: "Notes after rain",         author: "Tara Harun",       category: "notes"    },
+  { slug: "notes-on-a-doorway",        title: "Notes on a doorway",       author: "Ellen Grubbs",     category: "notes"    },
+  { slug: "field-notes-april",         title: "Field notes, April",       author: "Min Park",         category: "notes"    },
+];
+
+function toneClass(i) { return "y" + (((i * 3) % 7) + 1); }
+
+function render(articles) {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  const frag = document.createDocumentFragment();
+
+  articles.forEach((a, i) => {
+    const el = document.createElement("a");
+    el.className = "thumb " + toneClass(i);
+    el.href = `article.html?slug=${encodeURIComponent(a.slug)}`;
+    el.dataset.cat = a.category;
+
+    const tile = document.createElement("span");
+    tile.className = "tile";
+    el.appendChild(tile);
+
+    const meta = document.createElement("span");
+    meta.className = "meta";
+    const title = document.createElement("span");
+    title.className = "title";
+    title.textContent = a.title;
+    const author = document.createElement("span");
+    author.className = "author";
+    author.textContent = a.author;
+    meta.appendChild(title);
+    meta.appendChild(author);
+    el.appendChild(meta);
+
+    frag.appendChild(el);
+  });
+
+  grid.appendChild(frag);
+}
+
+function updateCounts(articles) {
+  const counts = { all: articles.length };
+  CATEGORIES.forEach(c => counts[c] = 0);
+  articles.forEach(a => { if (counts[a.category] != null) counts[a.category]++; });
+  document.querySelectorAll("sup[data-count]").forEach(sup => {
+    const k = sup.dataset.count;
+    sup.textContent = counts[k] != null ? counts[k] : 0;
+  });
+}
+
+function bindFilter() {
+  const cats = document.querySelectorAll(".categories .cat");
+  cats.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      cats.forEach(c => c.classList.remove("active"));
+      link.classList.add("active");
+      const target = link.dataset.cat;
+      document.querySelectorAll(".thumb").forEach(t => {
+        t.classList.toggle("hidden", !(target === "all" || t.dataset.cat === target));
+      });
+    });
+  });
+
+  // Inline intro links trigger category filter
+  document.querySelectorAll(".intro a[data-cat]").forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      const match = document.querySelector(`.categories .cat[data-cat="${a.dataset.cat}"]`);
+      if (match) match.click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+}
+
+async function init() {
+  let articles = null;
+  if (SANITY_ENABLED) articles = await getArticles();
+  if (!articles || !articles.length) articles = MOCK_ARTICLES;
+
+  render(articles);
+  updateCounts(articles);
+  bindFilter();
+}
+
+document.addEventListener("DOMContentLoaded", init);

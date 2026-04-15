@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MPLAN Magazine</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-white text-black">
+
+  <!-- Top bar -->
+  <div class="menu">
+    <a href="index.html" class="homeLink">MPLAN MAGAZINE</a>
+    <a href="about.html" class="aboutLink">About</a>
+    <a href="contact.html" class="imprintLink">Contact</a>
+  </div>
+
+  <!-- Intro description with inline category counts -->
+  <section class="intro">
+    <p>
+      MPLAN Magazine is an independent publication working in the fields of urbanism, architecture and everyday life.
+      Forever in search of overlooked moments within registers including
+      <a href="#" data-cat="matter">Matter<sup data-count="matter">0</sup></a>,
+      <a href="#" data-cat="projects">Projects<sup data-count="projects">0</sup></a> and
+      <a href="#" data-cat="letters">Letters<sup data-count="letters">0</sup></a>, it draws inspiration from the street
+      and often utilises
+      <a href="#" data-cat="address">Address a space<sup data-count="address">0</sup></a> and
+      <a href="#" data-cat="notes">Notes<sup data-count="notes">0</sup></a> to activate the page. The magazine's oeuvre
+      varies from essays and critiques to field notes and speculative ideas.
+    </p>
+  </section>
+
+  <!-- Category filter -->
+  <nav class="categories">
+    <div class="row">
+      <a href="#" class="cat active" data-cat="all">All<sup data-count="all">0</sup></a>
+      <a href="#" class="cat" data-cat="matter">Matter<sup data-count="matter">0</sup></a>
+      <a href="#" class="cat" data-cat="projects">Projects<sup data-count="projects">0</sup></a>
+      <a href="#" class="cat" data-cat="letters">Letters<sup data-count="letters">0</sup></a>
+      <a href="#" class="cat" data-cat="address">Address a space<sup data-count="address">0</sup></a>
+      <a href="#" class="cat" data-cat="notes">Notes<sup data-count="notes">0</sup></a>
+    </div>
+  </nav>
+
+  <!-- Article grid -->
+  <main class="home">
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

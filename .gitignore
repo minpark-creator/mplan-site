@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+.env
+.env.local
+.vercel
+.sanity
+studio/node_modules
+studio/dist
+studio/.sanity
+.playwright-mcp
+*.png
