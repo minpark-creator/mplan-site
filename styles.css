@@ -165,35 +165,23 @@ sup {
 /* Smooth transition for the whole tile so the filter dim feels organic */
 .thumb { transition: opacity 0.35s ease; }
 
-/* ---- Touch devices: no hover, so always show title + author under the tile
-   (single tap still navigates). Matches sabinemarcelis.com on mobile. ---- */
+/* ---- Touch devices: first tap reveals hover state (blur + title/author),
+   second tap navigates. Driven by a `.tapped` class toggled in script.js. ---- */
 @media (hover: none) {
-  .grid { gap: 20px 15px; }
-  .thumb .meta {
-    position: static;
-    opacity: 1;
-    padding: 8px 0 0;
-    text-align: left;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-  /* Tile keeps its square aspect ratio, meta sits underneath */
-  .thumb {
-    aspect-ratio: auto;
-    border: none;
-    background: transparent;
-  }
-  .thumb .tile {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    border: 1px solid #ececec;
-  }
-  .thumb.has-image .tile { border-color: transparent; }
-  /* Disable hover blur on touch */
+  /* Disable sticky :hover — iOS keeps the last-tapped element in :hover */
   .thumb:hover .tile { opacity: 1; filter: none; }
+  .thumb:hover .meta { opacity: 0; }
 
-  .thumb .meta .title  { font-size: 12px; }
-  .thumb .meta .author { font-size: 11px; color: #555; }
+  /* First-tap state mirrors the desktop hover look */
+  .thumb.tapped.has-image .tile {
+    opacity: 0.6;
+    filter: blur(4px) brightness(1.1);
+  }
+  .thumb.tapped:not(.has-image) .tile {
+    opacity: 0.35;
+    filter: blur(4px);
+  }
+  .thumb.tapped .meta { opacity: 1; }
 }
 
 /* Category filter: non-matching tiles fade way down but stay in place */

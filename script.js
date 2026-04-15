@@ -113,6 +113,34 @@ function bindFilter() {
   });
 }
 
+// On touch devices, require two taps on a thumb:
+//   1st tap → show hover-style overlay (blur + title/author) via `.tapped`
+//   2nd tap on the same thumb → follow the link to the article
+// Tapping a different thumb shifts focus; tapping elsewhere clears it.
+function bindTouchHover() {
+  if (!window.matchMedia("(hover: none)").matches) return;
+
+  let active = null;
+  document.querySelectorAll(".thumb").forEach(thumb => {
+    thumb.addEventListener("click", (e) => {
+      if (active !== thumb) {
+        e.preventDefault();
+        if (active) active.classList.remove("tapped");
+        thumb.classList.add("tapped");
+        active = thumb;
+      }
+      // else: second tap on the active thumb — allow navigation
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (active && !active.contains(e.target)) {
+      active.classList.remove("tapped");
+      active = null;
+    }
+  });
+}
+
 async function init() {
   let articles = null;
   if (SANITY_ENABLED) articles = await getArticles();
@@ -121,6 +149,7 @@ async function init() {
   render(articles);
   updateCounts(articles);
   bindFilter();
+  bindTouchHover();
 }
 
 document.addEventListener("DOMContentLoaded", init);
