@@ -92,12 +92,14 @@ sup {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: #f7d100; /* yellow placeholder */
+  background: #ffffff;
   overflow: hidden;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  border: 1px solid #ececec; /* subtle outline so empty tiles stay visible on white */
 }
+.thumb.has-image { border-color: transparent; }
 
 .thumb .tile {
   position: absolute;
@@ -106,13 +108,18 @@ sup {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transition: opacity 0.25s ease, filter 0.25s ease;
+  transition: filter 0.4s 0.1s ease, opacity 0.4s 0.1s ease;
 }
 
-/* When a cover image is set, fade the tile slightly on hover rather than
-   clearing it, so the image stays visible under the title/author overlay. */
-.thumb.has-image:hover .tile { opacity: 0.55; }
-.thumb:not(.has-image):hover .tile { opacity: 0.15; }
+/* Sabine-style hover: image blurs + dims slightly under the title overlay */
+.thumb.has-image:hover .tile {
+  opacity: 0.6;
+  filter: blur(4px) brightness(1.1);
+}
+.thumb:not(.has-image):hover .tile {
+  opacity: 0.35;
+  filter: blur(4px);
+}
 
 .thumb .meta {
   position: absolute;
@@ -133,7 +140,6 @@ sup {
 /* Keep hover text legible on any cover image */
 .thumb.has-image .meta {
   color: #000;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.6);
 }
 
 .thumb .meta .title {
@@ -148,14 +154,10 @@ sup {
   color: #333;
 }
 
-/* Slight yellow-tone variants so the grid isn't a single flat color */
-.thumb.y1 { background: #f7d100; }
-.thumb.y2 { background: #ffdb1a; }
-.thumb.y3 { background: #ead000; }
-.thumb.y4 { background: #fee247; }
-.thumb.y5 { background: #f4c800; }
-.thumb.y6 { background: #fff066; }
-.thumb.y7 { background: #e6c200; }
+/* Tone variants no longer tint — kept as empty hooks in case we want
+   subtle per-tile variation later. */
+.thumb.y1, .thumb.y2, .thumb.y3, .thumb.y4,
+.thumb.y5, .thumb.y6, .thumb.y7 { background: #ffffff; }
 
 /* Smooth transition for the whole tile so the filter dim feels organic */
 .thumb { transition: opacity 0.35s ease; }
@@ -285,8 +287,8 @@ sup {
   gap: 14px;
   flex-wrap: wrap;
   margin-top: 8px;
-  font-size: 11.5px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.45;
   color: #666;
 }
 .hero-image .cap,
@@ -327,29 +329,15 @@ sup {
 .article-body a { text-decoration: underline; }
 .article-body .muted { color: #888; }
 
-/* Inline images can be wider than the text column */
+/* Inline images match the text column width */
 .inline-image {
-  margin: 36px auto;
-  /* pull out slightly beyond text column on wide screens */
-  max-width: 960px;
-  width: calc(100% + 30px);
-  margin-left: -15px;
-  margin-right: -15px;
-  padding: 0 15px;
+  margin: 36px 0;
+  width: 100%;
 }
 .inline-image img {
   display: block;
   width: 100%;
   height: auto;
-}
-@media (min-width: 901px) {
-  .inline-image {
-    width: calc(100vw - 30px);
-    max-width: 960px;
-    margin-left: calc(50% - 480px);
-    margin-right: 0;
-    padding: 0;
-  }
 }
 
 /* View more */

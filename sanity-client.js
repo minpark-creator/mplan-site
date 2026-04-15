@@ -6,6 +6,7 @@
 // ============================================================
 
 import { createClient } from "https://esm.sh/@sanity/client@6";
+import imageUrlBuilder from "https://esm.sh/@sanity/image-url@1";
 import { SANITY_CONFIG } from "./sanity-config.js";
 
 export const SANITY_ENABLED =
@@ -20,21 +21,42 @@ export const client = SANITY_ENABLED
     })
   : null;
 
-/* -------- Image URL builder (no extra dep) -------- */
-// Accepts a Sanity image asset _ref like "image-abcdef-1200x800-jpg" and
-// returns a CDN URL. Adds an optional width param for responsive sizing.
-export function urlFor(ref, width) {
-  if (!ref || !SANITY_ENABLED) return "";
-  // ref format: image-<id>-<dims>-<format>
-  const m = String(ref).match(/^image-([a-f0-9]+)-(\d+x\d+)-(\w+)$/i);
-  if (!m) return "";
-  const [, id, dims, ext] = m;
-  const base = `https://cdn.sanity.io/images/${SANITY_CONFIG.projectId}/${SANITY_CONFIG.dataset}/${id}-${dims}.${ext}`;
-  return width ? `${base}?w=${width}&auto=format&q=80` : `${base}?auto=format`;
+/* -------- Image URL builder --------
+   Uses the official @sanity/image-url builder so hotspot + crop set in the
+   Studio are respected. Accepts a Sanity image object (with asset ref and
+   optionally hotspot/crop), not just a bare _ref string. */
+const builder = SANITY_ENABLED ? imageUrlBuilder(client) : null;
+
+// Responsive image. Preserves aspect ratio. Width only.
+export function urlFor(image, width) {
+  if (!builder || !image) return "";
+  try {
+    let b = builder.image(image).auto("format");
+    if (width) b = b.width(width);
+    return b.url();
+  } catch (_) { return ""; }
+}
+
+// Hotspot-aware square thumbnail for home grid + "view more" tiles.
+export function thumbUrl(image, size = 600) {
+  if (!builder || !image) return "";
+  try {
+    return builder
+      .image(image)
+      .width(size)
+      .height(size)
+      .fit("crop")      // honours hotspot + crop from the Studio
+      .auto("format")
+      .quality(75)
+      .url();
+  } catch (_) { return ""; }
 }
 
 /* -------- Queries -------- */
 
+// Returns the full cover image (asset ref + hotspot + crop) so the
+// browser-side image-url builder can apply the author's crop. Same for
+// inline body images.
 const ARTICLE_FIELDS = `
   _id,
   title,
@@ -43,22 +65,22 @@ const ARTICLE_FIELDS = `
   category,
   publishedAt,
   excerpt,
-  "coverUrl": coverImage.asset.asset->url,
   coverImage{
     caption,
     credit,
     alt,
-    "url": asset.asset->url
+    asset{ ..., hotspot, crop }
   },
   body[]{
     ...,
     _type == "inlineImage" => {
       ...,
-      "url": asset.asset->url
+      asset{ ..., hotspot, crop }
     },
     _type == "image" => {
       ...,
-      "url": asset->url
+      hotspot,
+      crop
     }
   }
 `;
@@ -79,7 +101,7 @@ export async function getRelatedArticles(excludeSlug, limit = 4) {
   if (!client) return null;
   const q = `*[_type == "article" && slug.current != $slug] | order(publishedAt desc)[0...20]{
     title, "slug": slug.current, author, category,
-    "coverUrl": coverImage.asset.asset->url
+    coverImage{ asset{ ..., hotspot, crop } }
   }`;
   try {
     const list = await client.fetch(q, { slug: excludeSlug || "" });

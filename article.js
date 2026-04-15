@@ -7,6 +7,7 @@ import {
   getRelatedArticles,
   SANITY_ENABLED,
   urlFor,
+  thumbUrl,
 } from "./sanity-client.js";
 
 const CATEGORY_LABELS = {
@@ -39,11 +40,11 @@ function renderBlock(block, defs) {
 }
 
 function renderInlineImage(img) {
-  const src =
-    img.url ||
-    (img.asset && img.asset._ref && urlFor
-      ? urlFor(img.asset._ref, 1400)
-      : null);
+  // `img.asset` is the nested image field for our inlineImage type (which
+  // carries its own hotspot/crop). Fall back to `img` itself for bare image
+  // blocks.
+  const target = img.asset && img.asset.asset ? img.asset : img;
+  const src = urlFor(target, 1400);
   if (!src) return "";
   const caption = img.caption ? `<span class="cap">${img.caption}</span>` : "";
   const credit  = img.credit  ? `<span class="credit">${img.credit}</span>` : "";
@@ -95,21 +96,10 @@ function renderArticle(a) {
   const cat  = CATEGORY_LABELS[a.category] || "";
   const date = formatDate(a.publishedAt);
 
-  const coverSrc =
-    a.coverUrl ||
-    (a.coverImage && a.coverImage.asset && urlFor ? urlFor(a.coverImage.asset._ref, 1600) : null);
-
-  const coverCaption = a.coverImage?.caption || "";
-  const coverCredit  = a.coverImage?.credit  || "";
-  const coverMeta = (coverCaption || coverCredit)
-    ? `<figcaption>${coverCaption ? `<span class="cap">${coverCaption}</span>` : ""}${coverCredit ? `<span class="credit">${coverCredit}</span>` : ""}</figcaption>`
-    : "";
-
-  const hero = coverSrc
-    ? `<figure class="hero-image">
-         <img src="${coverSrc}" alt="${(a.title || "").replace(/"/g, "&quot;")}">
-         ${coverMeta}
-       </figure>` : "";
+  // The cover image is used ONLY as a thumbnail on the home and
+  // "view more" grids — it is intentionally not rendered on the
+  // article page. Images shown inside the article come from the
+  // body (inline images) only.
 
   root.innerHTML = `
     <header class="article-header">
@@ -120,7 +110,6 @@ function renderArticle(a) {
       <h1 class="article-title">${a.title || ""}</h1>
       <div class="article-by">Words by ${a.author || "—"}</div>
     </header>
-    ${hero}
     <div class="article-body">
       ${renderBody(a.body)}
     </div>
@@ -148,12 +137,15 @@ function renderViewMore(list) {
 
   const picks = shuffle(list).slice(0, 4);
   picks.forEach((a, i) => {
+    const coverImg = a.coverImage?.asset || a.coverImage;
+    const coverSrc = coverImg ? thumbUrl(coverImg, 600) : "";
+
     const el = document.createElement("a");
     el.className = "thumb " + toneClass(i);
-    if (a.coverUrl) el.classList.add("has-image");
+    if (coverSrc) el.classList.add("has-image");
     el.href = `article.html?slug=${encodeURIComponent(a.slug)}`;
-    const tileStyle = a.coverUrl
-      ? ` style="background-image:url('${a.coverUrl}?w=600&auto=format&q=75')"`
+    const tileStyle = coverSrc
+      ? ` style="background-image:url('${coverSrc}')"`
       : "";
     el.innerHTML = `
       <span class="tile"${tileStyle}></span>

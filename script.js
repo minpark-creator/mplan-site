@@ -1,7 +1,7 @@
 // MPLAN Magazine — home page grid + category filter
 // Pulls from Sanity when configured; otherwise falls back to MOCK below.
 
-import { getArticles, SANITY_ENABLED } from "./sanity-client.js";
+import { getArticles, SANITY_ENABLED, thumbUrl } from "./sanity-client.js";
 
 const CATEGORIES = ["matter", "projects", "letters", "address", "notes"];
 
@@ -41,16 +41,21 @@ function render(articles) {
   const frag = document.createDocumentFragment();
 
   articles.forEach((a, i) => {
+    // Build a hotspot-aware square thumbnail URL from the Sanity image
+    // (respects the crop the editor set in the Studio).
+    const coverImg = a.coverImage?.asset || a.coverImage;
+    const coverSrc = coverImg ? thumbUrl(coverImg, 600) : "";
+
     const el = document.createElement("a");
     el.className = "thumb " + toneClass(i);
-    if (a.coverUrl) el.classList.add("has-image");
+    if (coverSrc) el.classList.add("has-image");
     el.href = `article.html?slug=${encodeURIComponent(a.slug)}`;
     el.dataset.cat = a.category;
 
     const tile = document.createElement("span");
     tile.className = "tile";
-    if (a.coverUrl) {
-      tile.style.backgroundImage = `url("${a.coverUrl}?w=600&auto=format&q=75")`;
+    if (coverSrc) {
+      tile.style.backgroundImage = `url("${coverSrc}")`;
     }
     el.appendChild(tile);
 
