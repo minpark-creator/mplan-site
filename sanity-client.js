@@ -113,6 +113,7 @@ export async function getAboutPage() {
   if (!client) return null;
   const q = `*[_type == "aboutPage"][0]{
     intro, team, contributors, issues,
+    notes[]{ text, placement },
     sideImage{
       caption, credit, alt,
       asset{ ..., hotspot, crop }

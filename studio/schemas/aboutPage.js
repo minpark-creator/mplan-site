@@ -23,9 +23,55 @@ export default {
         { name: "alt",     title: "Alt text",        type: "string" },
       ],
     },
-    { name: "team",          title: "Team (one name per line)",              type: "text", rows: 8 },
-    { name: "contributors",  title: "Contributors — Issue 01 (one per line)", type: "text", rows: 20 },
-    { name: "issues",        title: "Issues (one per line)",                  type: "text", rows: 6 },
+    { name: "team",          title: "Team (one name per line)",         type: "text", rows: 8 },
+    { name: "contributors",  title: "Contributors (one name per line)", type: "text", rows: 20 },
+    { name: "issues",        title: "Issues (one per line)",            type: "text", rows: 6 },
+
+    {
+      name: "notes",
+      title: "Additional notes (grey small text)",
+      description:
+        "Extra grey footnote-style paragraphs. Each one picks which section it appears under. The canonical note under Contributors (\"and architects, photographers, writers…\") is always shown automatically — don't re-add it here.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "note",
+          title: "Note",
+          fields: [
+            {
+              name: "text",
+              title: "Text",
+              type: "text",
+              rows: 3,
+              validation: Rule => Rule.required(),
+            },
+            {
+              name: "placement",
+              title: "Place under which section",
+              type: "string",
+              options: {
+                list: [
+                  { title: "After Team",         value: "afterTeam" },
+                  { title: "After Contributors", value: "afterContributors" },
+                  { title: "After Issues",       value: "afterIssues" },
+                ],
+                layout: "radio",
+              },
+              initialValue: "afterContributors",
+              validation: Rule => Rule.required(),
+            },
+          ],
+          preview: {
+            select: { text: "text", placement: "placement" },
+            prepare: ({ text, placement }) => ({
+              title: text ? text.slice(0, 60) : "(empty note)",
+              subtitle: placement || "",
+            }),
+          },
+        },
+      ],
+    },
   ],
   preview: { prepare: () => ({ title: "About page" }) },
 };
