@@ -112,7 +112,11 @@ export async function getRelatedArticles(excludeSlug, limit = 4) {
 export async function getAboutPage() {
   if (!client) return null;
   const q = `*[_type == "aboutPage"][0]{
-    intro, team, contributors, issues, contactBlock
+    intro, team, contributors, issues,
+    sideImage{
+      caption, credit, alt,
+      asset{ ..., hotspot, crop }
+    }
   }`;
   try { return await client.fetch(q); } catch (e) { console.warn("getAboutPage error:", e); return null; }
 }
@@ -120,7 +124,8 @@ export async function getAboutPage() {
 export async function getContactPage() {
   if (!client) return null;
   const q = `*[_type == "contactPage"][0]{
-    intro, emails, sections
+    intro, sections,
+    contactInfo{ email, phone, address }
   }`;
   try { return await client.fetch(q); } catch (e) { console.warn("getContactPage error:", e); return null; }
 }

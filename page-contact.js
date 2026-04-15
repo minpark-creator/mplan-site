@@ -12,14 +12,21 @@ function portableToParagraphs(blocks) {
   }).join("");
 }
 
-function renderEmails(emails) {
-  if (!Array.isArray(emails) || !emails.length) return "";
-  return emails.map((e, i) => `
-    <div class="item">
-      <span class="label">${e.label || ""}</span>
-      <span class="value">${i === 0 ? (e.email || "") : ""}</span>
-    </div>
-  `).join("");
+function linesToBr(lines) {
+  if (Array.isArray(lines)) return lines.filter(Boolean).join("<br>");
+  return (lines || "").toString().split(/\r?\n/).filter(Boolean).join("<br>");
+}
+
+function renderContactInfo(info) {
+  if (!info) return "";
+  const rows = [];
+  if (info.email)   rows.push(row("Email",   info.email));
+  if (info.phone)   rows.push(row("Phone",   info.phone));
+  if (info.address) rows.push(row("Address", linesToBr(info.address)));
+  return rows.join("");
+  function row(label, value) {
+    return `<div class="item"><span class="label">${label}</span><span class="value">${value}</span></div>`;
+  }
 }
 
 function renderSections(sections) {
@@ -38,7 +45,7 @@ function render(data) {
 
   grid.innerHTML = `
     <section class="col-left">${portableToParagraphs(data.intro)}</section>
-    <aside class="col-right">${renderEmails(data.emails)}</aside>
+    <aside class="col-right">${renderContactInfo(data.contactInfo)}</aside>
     ${renderSections(data.sections)}
   `;
 }

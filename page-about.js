@@ -1,6 +1,6 @@
 // About page — overrides the static HTML with Sanity content if configured.
 
-import { getAboutPage, SANITY_ENABLED } from "./sanity-client.js";
+import { getAboutPage, SANITY_ENABLED, urlFor } from "./sanity-client.js";
 
 function portableToParagraphs(blocks) {
   if (!Array.isArray(blocks)) return "";
@@ -17,16 +17,20 @@ function linesToBr(lines) {
   return (lines || "").toString().split(/\r?\n/).filter(Boolean).join("<br>");
 }
 
-function renderContact(block) {
-  if (!block) return "";
-  const items = [];
-  if (block.mail)    items.push(row("Mail", block.mail));
-  if (block.address) items.push(row("Address", linesToBr(block.address)));
-  if (block.ig)      items.push(row("IG", block.ig));
-  return items.join("");
-  function row(label, value) {
-    return `<div class="item"><span class="label">${label}</span><span class="value">${value}</span></div>`;
-  }
+function renderSideImage(img) {
+  if (!img) return "";
+  const target = img.asset && img.asset.asset ? img.asset : img;
+  const src = urlFor(target, 1200);
+  if (!src) return "";
+  const alt = (img.alt || img.caption || "").replace(/"/g, "&quot;");
+  const cap = img.caption ? `<span class="cap">${img.caption}</span>` : "";
+  const cred = img.credit  ? `<span class="credit">${img.credit}</span>` : "";
+  const meta = (cap || cred) ? `<figcaption>${cap}${cred}</figcaption>` : "";
+  return `
+    <figure class="side-image">
+      <img src="${src}" alt="${alt}">
+      ${meta}
+    </figure>`;
 }
 
 function render(about) {
@@ -38,7 +42,7 @@ function render(about) {
       ${portableToParagraphs(about.intro) || ""}
     </section>
     <aside class="col-right">
-      ${renderContact(about.contactBlock)}
+      ${renderSideImage(about.sideImage)}
     </aside>
     ${about.team ? `
       <section class="section">

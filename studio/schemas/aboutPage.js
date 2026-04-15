@@ -1,19 +1,26 @@
 // Sanity schema — About page (singleton)
+//
+// Layout idea: left column is the intro / bio paragraphs, right column is
+// a single image with optional caption + credit. On narrow screens the
+// image slots between the intro and the "Team / Contributors / Issues"
+// sections automatically.
 export default {
   name: "aboutPage",
   title: "About page",
   type: "document",
   fields: [
     {
-      name: "intro", title: "Intro paragraphs", type: "array",
+      name: "intro", title: "Intro paragraphs (left column)", type: "array",
       of: [{ type: "block" }],
     },
     {
-      name: "contactBlock", title: "Contact block (right column)", type: "object",
+      name: "sideImage", title: "Right column image", type: "object",
+      description: "Shown to the right of the intro on desktop. On mobile it appears between the intro and the sections below.",
       fields: [
-        { name: "mail",    title: "Mail",    type: "string" },
-        { name: "address", title: "Address (one line per row)", type: "text", rows: 4 },
-        { name: "ig",      title: "Instagram", type: "string" },
+        { name: "asset",   title: "Image",           type: "image", options: { hotspot: true } },
+        { name: "caption", title: "Caption",         type: "string" },
+        { name: "credit",  title: "Source / credit", type: "string" },
+        { name: "alt",     title: "Alt text",        type: "string" },
       ],
     },
     { name: "team",          title: "Team (one name per line)",              type: "text", rows: 8 },

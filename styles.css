@@ -21,17 +21,20 @@ sup {
   margin-left: 1px;
 }
 
-/* Top menu: About / Imprint */
+/* Top menu: About / Contact — solid white strip so scrolling content
+   never bleeds through on mobile. */
 .menu {
   position: fixed;
-  top: 15px;
-  left: 15px;
-  right: 15px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  pointer-events: none;
+  padding: 15px;
+  background: #ffffff;
+  border-bottom: 1px solid transparent; /* keeps layout steady when we add a hairline */
 }
 .menu a { pointer-events: auto; }
 
@@ -162,6 +165,37 @@ sup {
 /* Smooth transition for the whole tile so the filter dim feels organic */
 .thumb { transition: opacity 0.35s ease; }
 
+/* ---- Touch devices: no hover, so always show title + author under the tile
+   (single tap still navigates). Matches sabinemarcelis.com on mobile. ---- */
+@media (hover: none) {
+  .grid { gap: 20px 15px; }
+  .thumb .meta {
+    position: static;
+    opacity: 1;
+    padding: 8px 0 0;
+    text-align: left;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  /* Tile keeps its square aspect ratio, meta sits underneath */
+  .thumb {
+    aspect-ratio: auto;
+    border: none;
+    background: transparent;
+  }
+  .thumb .tile {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #ececec;
+  }
+  .thumb.has-image .tile { border-color: transparent; }
+  /* Disable hover blur on touch */
+  .thumb:hover .tile { opacity: 1; filter: none; }
+
+  .thumb .meta .title  { font-size: 12px; }
+  .thumb .meta .author { font-size: 11px; color: #555; }
+}
+
 /* Category filter: non-matching tiles fade way down but stay in place */
 .thumb.dimmed { opacity: 0.08; pointer-events: none; }
 
@@ -179,6 +213,25 @@ sup {
   padding: 132px 15px 160px;
   min-height: 100vh;
 }
+
+/* Right-column image on the About page */
+.about-grid .col-right .side-image { margin: 0; }
+.about-grid .col-right .side-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.about-grid .col-right .side-image figcaption {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #666;
+}
+.about-grid .col-right .side-image .cap    { color: #333; }
+.about-grid .col-right .side-image .credit { color: #888; }
 
 .about-grid {
   display: grid;
@@ -387,17 +440,22 @@ sup {
   .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .home { padding: 0 10px 80px; }
   .categories .row { gap: 12px; }
-  .menu { top: 12px; left: 12px; right: 12px; }
+  .menu { padding: 12px; }
 
   .about-page { padding: 90px 15px 80px; }
-  .about-grid { row-gap: 32px; }
+}
+
+/* Below 900px the grid collapses to a single column. Right column slots
+   between the intro and the section headings (its DOM order). */
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; row-gap: 32px; }
   .about-grid .col-left,
   .about-grid .col-right,
-  .about-grid .section { grid-column: 1 / -1; }
+  .about-grid .section { grid-column: 1 / -1; grid-row: auto; }
   .about-grid .col-right .item { grid-template-columns: 100px 1fr; }
 }
 
-@media (min-width: 701px) and (max-width: 1100px) {
+@media (min-width: 901px) and (max-width: 1100px) {
   .about-grid { grid-template-columns: repeat(6, 1fr); }
   .about-grid .col-left { grid-column: 1 / span 3; }
   .about-grid .col-right { grid-column: 4 / span 3; }
