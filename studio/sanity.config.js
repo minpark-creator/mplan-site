@@ -26,7 +26,44 @@ export default defineConfig({
               .id("contactPage")
               .child(S.document().schemaType("contactPage").documentId("contactPage")),
             S.divider(),
-            // Everything else (articles)
+
+            // Curated: browse articles grouped by the issue they appear in.
+            // Clicking an issue drills down into the articles that
+            // reference it.
+            S.listItem()
+              .title("Articles by issue")
+              .child(
+                S.documentTypeList("issue")
+                  .title("Pick an issue")
+                  .defaultOrdering([{ field: "number", direction: "desc" }])
+                  .child((issueId) =>
+                    S.documentList()
+                      .title("Articles in this issue")
+                      .schemaType("article")
+                      .filter('_type == "article" && issue._ref == $issueId')
+                      .params({ issueId })
+                      .defaultOrdering([
+                        { field: "publishedAt", direction: "desc" },
+                      ])
+                  )
+              ),
+
+            // Articles with no issue set — useful for drafts / orphans.
+            S.listItem()
+              .title("Articles — unassigned")
+              .child(
+                S.documentList()
+                  .title("Articles with no issue")
+                  .schemaType("article")
+                  .filter('_type == "article" && !defined(issue)')
+                  .defaultOrdering([
+                    { field: "publishedAt", direction: "desc" },
+                  ])
+              ),
+
+            S.divider(),
+
+            // Flat default lists for every document type (Issues, Articles)
             ...S.documentTypeListItems().filter(
               (item) => !["aboutPage", "contactPage"].includes(item.getId())
             ),

@@ -37,6 +37,12 @@ export default {
     { name: "authorEmail", title: "Author email (Contact link)",
       type: "string",
       description: "If set, a 'Contact' hyperlink appears on the article page that opens an email to this address. The address itself is never shown." },
+
+    { name: "issue", title: "Issue", type: "reference",
+      to: [{ type: "issue" }],
+      description:
+        "Which issue this article appears in. Pick an existing issue or create a new one from the sidebar. Leave empty for unassigned / draft." },
+
     { name: "publishedAt", title: "Published date", type: "datetime",
       initialValue: () => new Date().toISOString(),
       validation: Rule => Rule.required() },
