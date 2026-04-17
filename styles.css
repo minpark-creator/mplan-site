@@ -306,14 +306,25 @@ sup {
   letter-spacing: -0.005em;
   margin-bottom: 14px;
 }
+/* Name on the left, affiliation + Contact link pinned to the right.
+   On narrow screens they wrap underneath the name. */
 .article-by {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 .article-by-name {
   font-size: 14.9px;
   color: #333;
+}
+.article-by-meta {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 .article-affiliation {
   font-size: 13px;
