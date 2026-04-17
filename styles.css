@@ -369,6 +369,14 @@ sup {
   padding: 0 15px;
   font-family: "EB Garamond", Georgia, "Times New Roman", serif;
 }
+/* Figure captions (caption / source / credit under images) stay in the
+   sans-serif family so the small grey meta text keeps the same feel as
+   the rest of the UI chrome. */
+.article-body figcaption,
+.article-body figcaption .cap,
+.article-body figcaption .credit {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 .article-body p {
   font-size: 19px;
   line-height: 1.55;
