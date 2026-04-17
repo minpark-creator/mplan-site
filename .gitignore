@@ -9,4 +9,5 @@ studio/dist
 studio/.sanity
 .playwright-mcp
 *.png
+!favicon.png
 .claude/
