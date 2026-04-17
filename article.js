@@ -146,20 +146,36 @@ function renderViewMore(list) {
   picks.forEach((a, i) => {
     const coverImg = a.coverImage?.asset || a.coverImage;
     const coverSrc = coverImg ? thumbUrl(coverImg, 600) : "";
+    const lqip     = coverImg?.lqip || "";
 
     const el = document.createElement("a");
     el.className = "thumb " + toneClass(i);
     if (coverSrc) el.classList.add("has-image");
     el.href = `article.html?slug=${encodeURIComponent(a.slug)}`;
-    const tileStyle = coverSrc
-      ? ` style="background-image:url('${coverSrc}')"`
-      : "";
-    el.innerHTML = `
-      <span class="tile"${tileStyle}></span>
-      <span class="meta">
-        <span class="title">${a.title || ""}</span>
-        <span class="author">${a.author || ""}</span>
-      </span>`;
+
+    const tile = document.createElement("span");
+    tile.className = "tile";
+    if (lqip) tile.style.backgroundImage = `url("${lqip}")`;
+
+    if (coverSrc) {
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.alt = "";
+      img.addEventListener("load", () => img.classList.add("loaded"));
+      img.src = coverSrc;
+      if (img.complete && img.naturalWidth > 0) img.classList.add("loaded");
+      tile.appendChild(img);
+    }
+
+    const meta = document.createElement("span");
+    meta.className = "meta";
+    meta.innerHTML = `
+      <span class="title">${a.title || ""}</span>
+      <span class="author">${a.author || ""}</span>`;
+
+    el.appendChild(tile);
+    el.appendChild(meta);
     grid.appendChild(el);
   });
   wrap.hidden = false;

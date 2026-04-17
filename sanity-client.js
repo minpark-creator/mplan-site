@@ -54,9 +54,22 @@ export function thumbUrl(image, size = 600) {
 
 /* -------- Queries -------- */
 
-// Returns the full cover image (asset ref + hotspot + crop) so the
-// browser-side image-url builder can apply the author's crop. Same for
-// inline body images.
+// Cover image projection used across grid + view-more + article detail.
+// Pulls asset ref + hotspot/crop (so @sanity/image-url respects the
+// author's framing) AND the auto-generated LQIP blob (tiny base64
+// placeholder used for blur-up loading on the home grid).
+const COVER_IMAGE_PROJECTION = `coverImage{
+  caption,
+  credit,
+  alt,
+  asset{
+    ...,
+    hotspot,
+    crop,
+    "lqip": asset->metadata.lqip
+  }
+}`;
+
 const ARTICLE_FIELDS = `
   _id,
   title,
@@ -67,12 +80,7 @@ const ARTICLE_FIELDS = `
   category,
   publishedAt,
   excerpt,
-  coverImage{
-    caption,
-    credit,
-    alt,
-    asset{ ..., hotspot, crop }
-  },
+  ${COVER_IMAGE_PROJECTION},
   body[]{
     ...,
     _type == "inlineImage" => {
@@ -103,7 +111,7 @@ export async function getRelatedArticles(excludeSlug, limit = 4) {
   if (!client) return null;
   const q = `*[_type == "article" && slug.current != $slug] | order(publishedAt desc)[0...20]{
     title, "slug": slug.current, author, category,
-    coverImage{ asset{ ..., hotspot, crop } }
+    ${COVER_IMAGE_PROJECTION}
   }`;
   try {
     const list = await client.fetch(q, { slug: excludeSlug || "" });
