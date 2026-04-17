@@ -35,6 +35,26 @@ export default {
       rows: 3,
       description: "Optional intro paragraph for the issue.",
     },
+
+    // Per-issue team + contributors rosters. The About page surfaces the
+    // most recent issue's rosters automatically; older issues stay as
+    // read-only history in Studio (archived).
+    {
+      name: "team",
+      title: "Team (one name per line)",
+      type: "text",
+      rows: 8,
+      description:
+        "The editorial team for this issue. Shown on the About page when this is the most recent issue with a team set.",
+    },
+    {
+      name: "contributors",
+      title: "Contributors (one name per line)",
+      type: "text",
+      rows: 20,
+      description:
+        "Contributors to this issue. Shown on the About page when this is the most recent issue with contributors set.",
+    },
   ],
   orderings: [
     {

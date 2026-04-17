@@ -23,8 +23,11 @@ export default {
         { name: "alt",     title: "Alt text",        type: "string" },
       ],
     },
-    { name: "team",          title: "Team (one name per line)",         type: "text", rows: 8 },
-    { name: "contributors",  title: "Contributors (one name per line)", type: "text", rows: 20 },
+    // NOTE: team + contributors used to live here. They now live on each
+    // Issue document (see schemas/issue.js), so every new issue keeps
+    // its own archived roster and the About page pulls from the latest
+    // issue automatically.
+
     { name: "issues",        title: "Issues (one per line)",            type: "text", rows: 6 },
 
     {

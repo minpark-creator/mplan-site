@@ -121,13 +121,21 @@ export async function getRelatedArticles(excludeSlug, limit = 4) {
 
 export async function getAboutPage() {
   if (!client) return null;
+  // team + contributors are pulled from the most recent issue that has
+  // those fields populated — this way the About page always reflects
+  // the current masthead, and past issues stay archived on their own
+  // issue documents in Studio.
   const q = `*[_type == "aboutPage"][0]{
-    intro, team, contributors, issues,
+    intro, issues,
     notes[]{ text, placement },
     sideImage{
       caption, credit, alt,
       asset{ ..., hotspot, crop }
-    }
+    },
+    "latestIssue": *[_type == "issue" && (defined(team) || defined(contributors))]
+      | order(number desc)[0]{
+        number, title, team, contributors
+      }
   }`;
   try { return await client.fetch(q); } catch (e) { console.warn("getAboutPage error:", e); return null; }
 }

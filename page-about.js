@@ -59,6 +59,11 @@ function render(about) {
   const grid = document.getElementById("about-grid");
   if (!grid || !about) return;
 
+  // Team + contributors come from the most recent issue that has them
+  // set. Older issues stay archived on their own documents in Studio.
+  const team         = about.latestIssue?.team;
+  const contributors = about.latestIssue?.contributors;
+
   grid.innerHTML = `
     <section class="col-left">
       ${portableToParagraphs(about.intro) || ""}
@@ -66,16 +71,16 @@ function render(about) {
     <aside class="col-right">
       ${renderSideImage(about.sideImage)}
     </aside>
-    ${about.team ? `
+    ${team ? `
       <section class="section">
         <h3>Team</h3>
-        <p>${linesToBr(about.team)}</p>
+        <p>${linesToBr(team)}</p>
         ${renderNotes(about.notes, "afterTeam")}
       </section>` : ""}
-    ${about.contributors ? `
+    ${contributors ? `
       <section class="section">
         <h3>Contributors</h3>
-        <p>${linesToBr(about.contributors)}</p>
+        <p>${linesToBr(contributors)}</p>
         <p class="note">${CANONICAL_CONTRIB_NOTE}</p>
         ${renderNotes(about.notes, "afterContributors")}
       </section>` : ""}
