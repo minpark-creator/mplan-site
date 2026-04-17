@@ -300,20 +300,20 @@ sup {
 .article-date { }
 
 .article-title {
-  font-size: 30px;
-  font-weight: 400;
-  line-height: 1.18;
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 1.15;
   letter-spacing: -0.005em;
-  margin-bottom: 14px;
+  margin-bottom: 28px;
 }
-/* Name on the left, affiliation + Contact link pinned to the right.
-   On narrow screens they wrap underneath the name. */
+/* All left-aligned, stacked vertically with enough breathing room
+   between "Words by …" and the grey affiliation / Contact line. */
 .article-by {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
 }
 .article-by-name {
   font-size: 14.9px;
@@ -321,10 +321,9 @@ sup {
 }
 .article-by-meta {
   display: flex;
-  gap: 14px;
-  align-items: baseline;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 .article-affiliation {
   font-size: 13px;
@@ -368,11 +367,12 @@ sup {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 15px;
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
 }
 .article-body p {
-  font-size: 16px;
-  line-height: 1.7;
-  margin: 0 0 1.7em;
+  font-size: 19px;
+  line-height: 1.55;
+  margin: 0 0 1.4em;
 }
 .article-body p + p { margin-top: 0; }
 .article-body h2 {

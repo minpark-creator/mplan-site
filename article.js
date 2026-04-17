@@ -113,7 +113,7 @@ function renderArticle(a) {
         ${(a.authorAffiliation || a.authorEmail) ? `
           <span class="article-by-meta">
             ${a.authorAffiliation ? `<span class="article-affiliation">${a.authorAffiliation}</span>` : ""}
-            ${a.authorEmail ? `<a class="article-contact" href="mailto:${a.authorEmail}">Contact</a>` : ""}
+            ${a.authorEmail ? `<a class="article-contact" href="mailto:${a.authorEmail}">Get in touch</a>` : ""}
           </span>` : ""}
       </div>
     </header>
