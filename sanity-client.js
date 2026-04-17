@@ -62,6 +62,8 @@ const ARTICLE_FIELDS = `
   title,
   "slug": slug.current,
   author,
+  authorAffiliation,
+  authorEmail,
   category,
   publishedAt,
   excerpt,

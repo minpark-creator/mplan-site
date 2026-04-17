@@ -108,7 +108,11 @@ function renderArticle(a) {
         ${date ? `<span class="article-date">${date}</span>` : ""}
       </div>
       <h1 class="article-title">${a.title || ""}</h1>
-      <div class="article-by">Words by ${a.author || "—"}</div>
+      <div class="article-by">
+        <span class="article-by-name">Words by ${a.author || "—"}</span>
+        ${a.authorAffiliation ? `<span class="article-affiliation">${a.authorAffiliation}</span>` : ""}
+        ${a.authorEmail ? `<a class="article-contact" href="mailto:${a.authorEmail}">Contact</a>` : ""}
+      </div>
     </header>
     <div class="article-body">
       ${renderBody(a.body)}
