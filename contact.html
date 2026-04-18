@@ -16,69 +16,11 @@
     <a href="about.html" class="imprintLink">About</a>
   </div>
 
-  <!-- Contact page -->
+  <!-- Contact page — content comes from Sanity (see page-contact.js).
+       The grid is intentionally empty on first paint so there's no stale
+       fallback to flash; it's filled in once the CMS fetch resolves. -->
   <main class="about-page">
-    <div class="about-grid" id="contact-grid" data-cms="contact">
-
-      <!-- Left column: encouraging invitation copy -->
-      <section class="col-left">
-        <p>
-          We want to hear from you. MPLAN is built in conversation with its readers, and the best issues usually begin
-          with an email from someone we haven't met yet: a paragraph, a rough photograph, a scan of a sketchbook page.
-        </p>
-        <p>
-          Send us your ideas about cities. The street you pass every morning, the staircase that never quite works, the
-          shop that closed last year, the block you think about from the bus. Half-formed thoughts are welcome. So are
-          drawings, diagrams, field notes and writing you are not yet sure what to do with.
-        </p>
-        <p>
-          If you are a writer, photographer, architect, student, or simply a careful observer of where you live, please
-          get in touch. We read everything. We reply slowly but we always reply. Let's start a conversation.
-        </p>
-      </section>
-
-      <!-- Right column: email / phone / address (filled from Sanity CMS). -->
-      <aside class="col-right">
-        <div class="item">
-          <span class="label">Email</span>
-          <span class="value">mplan.mag@gmail.com</span>
-        </div>
-      </aside>
-
-      <!-- Full-width sections -->
-      <section class="section">
-        <h3>What to send</h3>
-        <p>
-          A short note about yourself, a sentence or two on the idea, and any rough material you're happy to share:
-          sketches, photos, links. No finished piece required. If it's long, we'll ask for more.
-        </p>
-      </section>
-
-      <section class="section">
-        <h3>Commissions &amp; Collaborations</h3>
-        <p>
-          We work with studios, institutions and independent practices on special issues, inserts and editorial
-          projects. Tell us what you have in mind and how you'd like to begin.
-        </p>
-      </section>
-
-      <section class="section">
-        <h3>Stockists &amp; Distribution</h3>
-        <p>
-          Bookshops and galleries interested in carrying MPLAN, or readers asking whether we ship to their city: please
-          write to the general address above and we'll route it.
-        </p>
-      </section>
-
-      <section class="section">
-        <h3>Response time</h3>
-        <p>
-          We read every message. Replies usually take one to three weeks, longer around issue release. Thank you for
-          your patience, and for writing.
-        </p>
-      </section>
-
-    </div>
+    <div class="about-grid" id="contact-grid" data-cms="contact"></div>
 
     <footer class="about-footer">
       <span>© 2026</span>
