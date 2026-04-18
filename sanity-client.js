@@ -152,8 +152,6 @@ const ARTICLE_FIELDS = `
   ${COVER_IMAGE_PROJECTION},
   body[]{
     ...,
-    // Inline images carry their own image field under `.asset`, which in
-    // turn has the real Sanity asset reference under `.asset.asset`.
     _type == "inlineImage" => {
       ...,
       asset{
@@ -162,7 +160,6 @@ const ARTICLE_FIELDS = `
         ${IMAGE_META}
       }
     },
-    // Bare image blocks: the asset ref is directly on the block itself.
     _type == "image" => {
       ...,
       hotspot, crop,
