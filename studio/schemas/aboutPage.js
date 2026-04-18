@@ -23,10 +23,29 @@ export default {
         { name: "alt",     title: "Alt text",        type: "string" },
       ],
     },
-    // NOTE: team + contributors used to live here. They now live on each
-    // Issue document (see schemas/issue.js), so every new issue keeps
-    // its own archived roster and the About page pulls from the latest
-    // issue automatically.
+    // Current masthead. These are the names that show up on the public
+    // About page under "Team" and "Contributors". If you leave them
+    // empty, the page falls back to the most recent Issue document's
+    // team + contributors (set under Articles → Issue → Issue details).
+    // Past issues' rosters always stay archived on their own Issue
+    // documents and surface in the "Past issues" drop-down at the
+    // bottom of the About page.
+    {
+      name: "team",
+      title: "Team (one name per line)",
+      type: "text",
+      rows: 8,
+      description:
+        "The current editorial team. Leave empty to auto-fill from the most recent issue.",
+    },
+    {
+      name: "contributors",
+      title: "Contributors (one name per line)",
+      type: "text",
+      rows: 20,
+      description:
+        "Current contributors. Leave empty to auto-fill from the most recent issue.",
+    },
 
     { name: "issues",        title: "Issues (one per line)",            type: "text", rows: 6 },
 

@@ -16,46 +16,31 @@ export default defineConfig({
         S.list()
           .title("Content")
           .items([
-            // Singletons pinned to the top
+            // Issues — flat list of Issue documents (Issue 01, 02, 03 …).
+            // "+" creates a new issue. Each issue carries its own team
+            // and contributors fields; the public About page renders the
+            // most recent issue's roster automatically.
             S.listItem()
-              .title("About page")
-              .id("aboutPage")
-              .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
-            S.listItem()
-              .title("Contact page")
-              .id("contactPage")
-              .child(S.document().schemaType("contactPage").documentId("contactPage")),
-            S.divider(),
-
-            // Curated: browse articles grouped by the issue they appear in.
-            // Clicking an issue drills down into the articles that
-            // reference it.
-            S.listItem()
-              .title("Articles by issue")
+              .title("Issues")
+              .id("issuesList")
               .child(
                 S.documentTypeList("issue")
-                  .title("Pick an issue")
-                  .defaultOrdering([{ field: "number", direction: "desc" }])
-                  .child((issueId) =>
-                    S.documentList()
-                      .title("Articles in this issue")
-                      .schemaType("article")
-                      .filter('_type == "article" && issue._ref == $issueId')
-                      .params({ issueId })
-                      .defaultOrdering([
-                        { field: "publishedAt", direction: "desc" },
-                      ])
-                  )
+                  .title("Issues")
+                  .defaultOrdering([
+                    { field: "number", direction: "desc" },
+                  ])
               ),
 
-            // Articles with no issue set — useful for drafts / orphans.
+            // Articles — flat list. "+" creates a new article and opens
+            // its editor in the next pane. Each article has an "Issue"
+            // reference field in its form (see schemas/article.js) that
+            // the editor uses to assign the article to an issue.
             S.listItem()
-              .title("Articles — unassigned")
+              .title("Articles")
+              .id("articlesList")
               .child(
-                S.documentList()
-                  .title("Articles with no issue")
-                  .schemaType("article")
-                  .filter('_type == "article" && !defined(issue)')
+                S.documentTypeList("article")
+                  .title("Articles")
                   .defaultOrdering([
                     { field: "publishedAt", direction: "desc" },
                   ])
@@ -63,10 +48,20 @@ export default defineConfig({
 
             S.divider(),
 
-            // Flat default lists for every document type (Issues, Articles)
-            ...S.documentTypeListItems().filter(
-              (item) => !["aboutPage", "contactPage"].includes(item.getId())
-            ),
+            // About page — plain singleton. All the editable fields
+            // (intro, side image, grey notes, issues blurb) live directly
+            // on this document. Team + contributors are NOT edited here:
+            // they live on each Issue document, and the public About
+            // page renders the most recent issue's roster automatically.
+            S.listItem()
+              .title("About page")
+              .id("aboutPage")
+              .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
+
+            S.listItem()
+              .title("Contact page")
+              .id("contactPage")
+              .child(S.document().schemaType("contactPage").documentId("contactPage")),
           ]),
     }),
     visionTool(),

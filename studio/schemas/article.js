@@ -41,7 +41,7 @@ export default {
     { name: "issue", title: "Issue", type: "reference",
       to: [{ type: "issue" }],
       description:
-        "Which issue this article appears in. Pick an existing issue or create a new one from the sidebar. Leave empty for unassigned / draft." },
+        "Which issue this article appears in. To change an already-assigned issue, click the ⋯ menu on the right of the issue card and pick Remove — the search box then reappears so you can pick a different issue (or tap + Create to add a brand-new one). Leave empty for unassigned / draft." },
 
     { name: "publishedAt", title: "Published date", type: "datetime",
       initialValue: () => new Date().toISOString(),
