@@ -1,37 +1,8 @@
 // MPLAN Magazine — home page grid + category filter
-// Pulls from Sanity when configured; otherwise falls back to MOCK below.
 
 import { getArticles, SANITY_ENABLED, thumbUrl } from "./sanity-client.js";
 
 const CATEGORIES = ["matter", "projects", "letters", "address", "notes"];
-
-// --- Mock fallback articles (used if Sanity isn't configured yet) ---
-const MOCK_ARTICLES = [
-  { slug: "the-sidewalk-is-an-object", title: "The sidewalk is an object", author: "SeungYeon Kim",   category: "matter"   },
-  { slug: "concrete-fade",             title: "Concrete, fade",           author: "Min Park",         category: "matter"   },
-  { slug: "stone-steps-no-1",          title: "Stone steps no. 1",        author: "Mari Stokke",      category: "matter"   },
-  { slug: "window-frames-seoul",       title: "Window frames, Seoul",     author: "Tiffany Goh",      category: "matter"   },
-
-  { slug: "a-square-without-a-name",   title: "A square without a name",  author: "Stefan Krysa",     category: "projects" },
-  { slug: "ground-floor-again",        title: "Ground floor, again",      author: "Claire Scandella", category: "projects" },
-  { slug: "slow-infrastructure",       title: "Slow infrastructure",      author: "Michael Short",    category: "projects" },
-  { slug: "the-public-bench-brief",    title: "The public bench brief",   author: "Juliana Martins",  category: "projects" },
-
-  { slug: "letter-from-hackney",       title: "Letter from Hackney",      author: "Ellen Grubbs",     category: "letters"  },
-  { slug: "dear-planner",              title: "Dear Planner",             author: "Hannah Matthiesen",category: "letters"  },
-  { slug: "a-note-to-my-landlord",     title: "A note to my landlord",    author: "Adhrita Roy",      category: "letters"  },
-  { slug: "open-letter-to-a-street",   title: "Open letter to a street",  author: "Christine Langston", category: "letters" },
-
-  { slug: "address-a-crossing",        title: "Address a crossing",       author: "Chuan Liu",        category: "address"  },
-  { slug: "address-a-stairwell",       title: "Address a stairwell",      author: "Ashutosh Mishra",  category: "address"  },
-  { slug: "address-a-courtyard",       title: "Address a courtyard",      author: "Mia Summa",        category: "address"  },
-  { slug: "address-a-parking-lot",     title: "Address a parking lot",    author: "Miriam Thompson",  category: "address"  },
-
-  { slug: "notes-from-a-bus",          title: "Notes from a bus",         author: "Spencer Chin-Pok Chan", category: "notes" },
-  { slug: "notes-after-rain",          title: "Notes after rain",         author: "Tara Harun",       category: "notes"    },
-  { slug: "notes-on-a-doorway",        title: "Notes on a doorway",       author: "Ellen Grubbs",     category: "notes"    },
-  { slug: "field-notes-april",         title: "Field notes, April",       author: "Min Park",         category: "notes"    },
-];
 
 function toneClass(i) { return "y" + (((i * 3) % 7) + 1); }
 
@@ -160,9 +131,8 @@ function bindTouchHover() {
 }
 
 async function init() {
-  let articles = null;
-  if (SANITY_ENABLED) articles = await getArticles();
-  if (!articles || !articles.length) articles = MOCK_ARTICLES;
+  let articles = [];
+  if (SANITY_ENABLED) articles = await getArticles() || [];
 
   render(articles);
   updateCounts(articles);

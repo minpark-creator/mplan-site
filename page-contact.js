@@ -50,6 +50,10 @@ function render(data) {
   `;
 }
 
+// Contact page content is owned by Sanity — there's no static HTML
+// fallback, so we just fetch and render. If the fetch fails or Sanity
+// isn't configured, the grid stays empty (deliberate: Sanity is the
+// single source of truth).
 async function init() {
   if (!SANITY_ENABLED) return;
   const data = await getContactPage();

@@ -14,6 +14,34 @@ html, body {
 a { color: inherit; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* ============================================================
+   CMS image wrapper — LQIP blur-up + native lazy load.
+   Every <img> rendered from Sanity is wrapped in a <span class="cms-img">.
+   The wrapper reserves space via an inline aspect-ratio and carries the
+   Sanity-generated LQIP blob as a background, so the page keeps its
+   layout stable and never shows a blank box while the full-res image
+   decodes. The inner <img> uses loading="lazy" + decoding="async" and
+   fades in via the `loaded` class added on decode.
+   ============================================================ */
+.cms-img {
+  display: block;
+  position: relative;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+.cms-img > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+.cms-img > img.loaded { opacity: 1; }
+
+
 sup {
   font-size: 0.6em;
   vertical-align: super;
@@ -285,6 +313,55 @@ sup {
 }
 .about-grid .section p {
   color: #000;
+}
+
+/* Past issues archive — collapsible roster per issue. Sits below the
+   Issues section; the latest issue's roster is already rendered above
+   under Team / Contributors, so this list intentionally skips it. */
+.about-grid .section.past-issues { margin-top: 28px; }
+.about-grid .past-issue {
+  border-top: 1px solid #e5e5e5;
+  padding: 10px 0;
+}
+.about-grid .past-issue:last-of-type { border-bottom: 1px solid #e5e5e5; }
+.about-grid .past-issue > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14.9px;
+  line-height: 1.5;
+  color: #000;
+}
+.about-grid .past-issue > summary::-webkit-details-marker { display: none; }
+.about-grid .past-issue > summary::after {
+  content: "+";
+  color: #666;
+  font-size: 16px;
+  line-height: 1;
+}
+.about-grid .past-issue[open] > summary::after { content: "−"; }
+.about-grid .past-issue-body {
+  padding: 14px 0 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.about-grid .past-issue-block h4 {
+  font-size: 14.9px;
+  font-weight: 400;
+  margin: 0 0 8px;
+  color: #000;
+}
+.about-grid .past-issue-block p {
+  color: #000;
+  font-size: 14.9px;
+  line-height: 1.5;
+}
+@media (max-width: 680px) {
+  .about-grid .past-issue-body { grid-template-columns: 1fr; gap: 16px; }
 }
 
 /* ----- Article detail page ----- */

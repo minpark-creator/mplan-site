@@ -2,9 +2,8 @@
 //  MPLAN — Sanity CMS configuration
 //  ------------------------------------------------------------
 //  Fill in your existing Sanity project details below.
-//  The site will fall back to the local mock content (in
-//  script.js / about.html / contact.html) whenever Sanity is
-//  not reachable or `projectId` is left blank.
+//  If Sanity is unreachable or projectId is blank, pages render
+//  empty — Sanity is the single source of truth (no mock fallback).
 // ============================================================
 
 export const SANITY_CONFIG = {

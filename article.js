@@ -8,6 +8,7 @@ import {
   SANITY_ENABLED,
   urlFor,
   thumbUrl,
+  cmsImageHtml,
 } from "./sanity-client.js";
 
 const CATEGORY_LABELS = {
@@ -40,18 +41,14 @@ function renderBlock(block, defs) {
 }
 
 function renderInlineImage(img) {
-  // `img.asset` is the nested image field for our inlineImage type (which
-  // carries its own hotspot/crop). Fall back to `img` itself for bare image
-  // blocks.
-  const target = img.asset && img.asset.asset ? img.asset : img;
-  const src = urlFor(target, 1400);
-  if (!src) return "";
+  const media = cmsImageHtml(img, 1400);
+  if (!media) return "";
   const caption = img.caption ? `<span class="cap">${img.caption}</span>` : "";
   const credit  = img.credit  ? `<span class="credit">${img.credit}</span>` : "";
   const meta = (caption || credit) ? `<figcaption>${caption}${credit}</figcaption>` : "";
   return `
     <figure class="inline-image">
-      <img src="${src}" alt="${(img.alt || img.caption || "").replace(/"/g, "&quot;")}">
+      ${media}
       ${meta}
     </figure>`;
 }
@@ -181,31 +178,6 @@ function renderViewMore(list) {
   wrap.hidden = false;
 }
 
-/* -------- Mock fallback (when CMS is unreachable / empty) -------- */
-
-const MOCK = {
-  articles: [
-    { slug: "the-sidewalk-is-an-object", title: "The sidewalk is an object", author: "SeungYeon Kim", category: "matter" },
-    { slug: "concrete-fade",             title: "Concrete, fade",            author: "Min Park",       category: "matter" },
-    { slug: "a-square-without-a-name",   title: "A square without a name",   author: "Stefan Krysa",   category: "projects" },
-    { slug: "ground-floor-again",        title: "Ground floor, again",       author: "Claire Scandella", category: "projects" },
-    { slug: "letter-from-hackney",       title: "Letter from Hackney",       author: "Ellen Grubbs",   category: "letters" },
-    { slug: "address-a-crossing",        title: "Address a crossing",        author: "Chuan Liu",      category: "address" },
-    { slug: "notes-from-a-bus",          title: "Notes from a bus",          author: "Spencer Chin-Pok Chan", category: "notes" },
-    { slug: "field-notes-april",         title: "Field notes, April",        author: "Min Park",       category: "notes" },
-  ],
-  articleFor(slug) {
-    const base = this.articles.find((x) => x.slug === slug) || {
-      slug, title: slug.replace(/-/g, " "), author: "—", category: "",
-    };
-    return {
-      ...base,
-      publishedAt: "2026-04-01",
-      body: [],
-    };
-  },
-};
-
 /* -------- Init -------- */
 
 async function init() {
@@ -215,15 +187,11 @@ async function init() {
 
   let data = null;
   if (SANITY_ENABLED) data = await getArticle(slug);
-  if (!data) data = MOCK.articleFor(slug);
   renderArticle(data);
 
   let related = null;
   if (SANITY_ENABLED) related = await getRelatedArticles(slug);
-  if (!related || !related.length) {
-    related = MOCK.articles.filter((x) => x.slug !== slug);
-  }
-  renderViewMore(related);
+  if (related && related.length) renderViewMore(related);
 }
 
 document.addEventListener("DOMContentLoaded", init);
